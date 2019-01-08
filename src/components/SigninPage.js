@@ -10,6 +10,7 @@ import Paper from "@material-ui/core/es/Paper/Paper";
 import Avatar from "@material-ui/core/es/Avatar/Avatar";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
+import axios from 'axios';
 
 const styles = theme => ({
     layout: {
@@ -55,6 +56,7 @@ class SigninPage extends Component {
             },
             sent: false
         };
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange = (event) => {
@@ -63,12 +65,21 @@ class SigninPage extends Component {
         this.setState({ user });
     };
 
-    handleSubmit = () => {
+    async handleSubmit () {
         this.setState({ sent: true });
 
-        console.log('OK Submit');
+        const { email, password } = this.state.user;
 
-        setTimeout(() => { console.log(this.state) }, 1);
+        // console.log('OK Submit');
+
+        // setTimeout(() => { console.log(this.state) }, 1);
+        try {
+            const response = await axios.post('http://127.0.0.1:8080/api/v1/users/login', { email, password });
+            console.log(response);
+        } catch (err) {
+            console.error(err);
+        }
+        this.setState({ sent: false });
     };
 
     render() {
