@@ -65,7 +65,8 @@ class SigninPage extends Component {
         this.setState({ user });
     };
 
-    async handleSubmit () {
+    handleSubmit = (event) => {
+        event.preventDefault();
         this.setState({ sent: true });
 
         const { email, password } = this.state.user;
@@ -73,13 +74,23 @@ class SigninPage extends Component {
         // console.log('OK Submit');
 
         // setTimeout(() => { console.log(this.state) }, 1);
-        try {
-            const response = await axios.post('http://127.0.0.1:8080/api/v1/users/login', { email, password });
-            console.log(response);
-        } catch (err) {
-            console.error(err);
-        }
-        this.setState({ sent: false });
+        axios.post('http://127.0.0.1:8080/api/v1/users/login', {'email': email, 'password': password})
+            .then(
+                response => {
+                    console.log(response.data);
+                    console.log(response.status);
+                    console.log(response.statusText);
+                    this.setState({ sent: false });
+                }
+            )
+            .catch( // 💩
+                error => {
+                    if (error.response.data) {
+                        console.log(error.response.data);
+                    }
+                    this.setState({ sent: false });
+                }
+            );
     };
 
     render() {
